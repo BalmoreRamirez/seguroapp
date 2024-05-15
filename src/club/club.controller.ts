@@ -1,13 +1,15 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ClubService } from './club.service';
 import { Club } from './club.entity';
 import { User } from '../user/user.entity';
+import { JwtAuthGuard } from '../AuthUsuario/jwt-auth.guard';
 
 @Controller('clubs')
 export class ClubController {
   constructor(private readonly clubService: ClubService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<Club[]> {
     return await this.clubService.findAll();
   }
