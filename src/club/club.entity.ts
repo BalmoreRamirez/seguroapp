@@ -1,7 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  Unique,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { SeguroClubUser } from '../seguro_club_user/seguro_club_user.entity';
+import { Zona } from '../Zona/zona.entity';
 
 @Entity('clubs')
+@Unique(['nombre'])
 export class Club {
   @PrimaryGeneratedColumn()
   id: number;
@@ -12,8 +22,9 @@ export class Club {
   @Column({ length: 255 })
   iglesia: string;
 
-  @Column({ length: 255 })
-  zona: string;
+  @ManyToOne(() => Zona, (zona) => zona.clubs)
+  @JoinColumn({ name: 'id_zona' }) // This is the foreign key in the Club table
+  zona: Zona;
 
   @Column({ length: 255 })
   distrito: string;

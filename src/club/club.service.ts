@@ -1,5 +1,5 @@
 import { User } from '../user/user.entity';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Club } from './club.entity';
@@ -14,7 +14,7 @@ export class ClubService {
   ) {}
 
   findAll(): Promise<Club[]> {
-    return this.clubsRepository.find();
+    return this.clubsRepository.find({ relations: ['zona'] });
   }
 
   async findUsers(clubId: string): Promise<any> {
@@ -24,7 +24,7 @@ export class ClubService {
 
     const club = await this.clubsRepository.findOne({
       where: { id: Number(clubId) },
-      relations: ['seguroClubUsers'],
+      relations: ['zona'],
     });
     const users = await this.userRepository
       .createQueryBuilder('user')
@@ -34,5 +34,16 @@ export class ClubService {
       .getMany();
 
     return { club, users };
+  }
+
+  async create(club: Club): Promise<Club> {
+    const existingClub = await this.clubsRepository.findOne({
+      where: { nombre: club.nombre },
+    });
+
+    if (existingClub) {
+      throw new ConflictException('El nombre del club ya existe');
+    }
+    return await this.clubsRepository.save(club);
   }
 }
