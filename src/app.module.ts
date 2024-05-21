@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { ClubModule } from './club/club.module';
 import { SeguroClubUserModule } from './seguro_club_user/seguro_club_user.module';
 import { AuthUsuarioModule } from './AuthUsuario/auth_usuario.module';
+import { ZonaModule } from './zona/zona.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthUsuarioModule } from './AuthUsuario/auth_usuario.module';
       synchronize: true,
     }),
     UserModule,
+    ZonaModule,
     ClubModule,
     SeguroClubUserModule,
     AuthUsuarioModule,

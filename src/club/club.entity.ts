@@ -8,7 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { SeguroClubUser } from '../seguro_club_user/seguro_club_user.entity';
-import { Zona } from '../Zona/zona.entity';
+import { Zona } from '../zona/zona.entity';
 
 @Entity('clubs')
 @Unique(['nombre'])
