@@ -19,7 +19,7 @@ export class ClubController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll(): Promise<Club[]> {
+  async findAll(): Promise<{ club: Club; userCount: number }[]> {
     return await this.clubService.findAll();
   }
 

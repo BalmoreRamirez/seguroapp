@@ -57,4 +57,14 @@ export class UserService {
       throw error;
     }
   }
+
+  async update(id: number, updatedData: Partial<User>): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id: id } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    Object.assign(user, updatedData);
+    return this.usersRepository.save(user);
+  }
 }

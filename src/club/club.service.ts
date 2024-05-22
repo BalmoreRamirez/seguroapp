@@ -17,8 +17,29 @@ export class ClubService {
     private userRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<Club[]> {
-    return this.clubsRepository.find({ relations: ['zona'] });
+  async findAll(): Promise<any[]> {
+    const clubs = await this.clubsRepository.find();
+    const clubsWithUserCount = await Promise.all(
+      clubs.map(async (club) => {
+        const users = await this.userRepository
+          .createQueryBuilder('user')
+          .innerJoin('user.seguroClubUsers', 'seguroClubUser')
+          .innerJoin('seguroClubUser.club', 'club')
+          .where('club.id = :clubId', { clubId: club.id })
+          .getMany();
+
+        return {
+          id: club.id,
+          nombre: club.nombre,
+          iglesia: club.iglesia,
+          distrito: club.distrito,
+          telefono: club.telefono,
+          userCount: users.length,
+        };
+      }),
+    );
+
+    return clubsWithUserCount;
   }
 
   async findOne(id: number): Promise<Club> {
