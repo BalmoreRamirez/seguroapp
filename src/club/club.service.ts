@@ -87,4 +87,13 @@ export class ClubService {
     Object.assign(club, updateClubDto);
     return this.clubsRepository.save(club);
   }
+
+  async findOneId(id: number): Promise<Club> {
+    const club = await this.clubsRepository.findOne({ where: { id: id } });
+    if (!club) {
+      throw new NotFoundException(`Club with id ${id} not found`);
+    }
+
+    return club;
+  }
 }

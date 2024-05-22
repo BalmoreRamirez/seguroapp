@@ -5,8 +5,9 @@ import {
   Param,
   Post,
   UseGuards,
-  Delete, Put
-} from "@nestjs/common";
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { ClubService } from './club.service';
 import { Club } from './club.entity';
 import { User } from '../user/user.entity';
@@ -63,5 +64,10 @@ export class ClubController {
     @Body() updateClubDto: Partial<Club>,
   ): Promise<Club> {
     return await this.clubService.update(Number(id), updateClubDto);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<Club> {
+    return await this.clubService.findOneId(id);
   }
 }
