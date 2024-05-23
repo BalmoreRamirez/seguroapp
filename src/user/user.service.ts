@@ -67,4 +67,19 @@ export class UserService {
     Object.assign(user, updatedData);
     return this.usersRepository.save(user);
   }
+
+  async delete(id: number): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id: id } });
+    if (!user) {
+      throw new NotFoundException(`User con id ${id} not existe`);
+    }
+
+    const seguroClubUsers = await this.seguroClubUserRepository.find({
+      where: { user: user },
+    });
+    await this.seguroClubUserRepository.remove(seguroClubUsers);
+
+    await this.usersRepository.remove(user);
+
+  }
 }

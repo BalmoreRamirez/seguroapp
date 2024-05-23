@@ -7,6 +7,8 @@ import {
   UseGuards,
   Delete,
   Put,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ClubService } from './club.service';
 import { Club } from './club.entity';
@@ -40,17 +42,16 @@ export class ClubController {
     const club = await this.clubService.findOne(Number(id));
 
     if (!club) {
-      return { message: 'El club con el ID proporcionado no existe' };
+      throw new NotFoundException('El club con el ID proporcionado no existe');
     }
 
     const isClubAssociatedWithAnyUser =
       await this.clubService.isClubAssociatedWithAnyUser(club);
 
     if (isClubAssociatedWithAnyUser) {
-      return {
-        message:
-          'El club no puede ser eliminado porque está asociado con un usuario',
-      };
+      throw new ForbiddenException(
+        'El club no puede ser eliminado porque está asociado con un usuario',
+      );
     }
 
     await this.clubService.delete(id);

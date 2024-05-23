@@ -18,7 +18,7 @@ export class ClubService {
   ) {}
 
   async findAll(): Promise<any[]> {
-    const clubs = await this.clubsRepository.find();
+    const clubs = await this.clubsRepository.find({ relations: ['zona'] });
     const clubsWithUserCount = await Promise.all(
       clubs.map(async (club) => {
         const users = await this.userRepository
@@ -35,6 +35,7 @@ export class ClubService {
           distrito: club.distrito,
           telefono: club.telefono,
           userCount: users.length,
+          zona: club.zona.nombre,
         };
       }),
     );
