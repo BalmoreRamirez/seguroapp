@@ -6,6 +6,8 @@ import {
   Unique,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { SeguroClubUser } from '../seguro_club_user/seguro_club_user.entity';
 import { Zona } from '../zona/zona.entity';
@@ -31,6 +33,19 @@ export class Club {
 
   @Column('int')
   telefono: number;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updatedAt: Date;
 
   @OneToMany(() => SeguroClubUser, (seguroClubUser) => seguroClubUser.user)
   seguroClubUsers: SeguroClubUser[];

@@ -40,7 +40,6 @@ export class UserService {
         );
       }
 
-      // Create a new SeguroClubUser for the new user associated with the club
       const newSeguroClubUser = this.seguroClubUserRepository.create({
         user: newUser,
         club: club,
@@ -80,6 +79,26 @@ export class UserService {
     await this.seguroClubUserRepository.remove(seguroClubUsers);
 
     await this.usersRepository.remove(user);
+  }
 
+  async createMany({ users, idClub }): Promise<User[]> {
+    const id_club = parseInt(idClub);
+    const createdUsers = await this.usersRepository.save(users);
+    const club = await this.clubRepository.findOne({ where: { id: id_club } });
+
+    if (!club) {
+      throw new NotFoundException(`Club con id ${idClub} no encontrado`);
+    }
+
+    const seguroClubUsers = createdUsers.map((user) => {
+      return {
+        user: user,
+        club: club,
+      };
+    });
+
+    await this.seguroClubUserRepository.save(seguroClubUsers);
+
+    return createdUsers;
   }
 }
