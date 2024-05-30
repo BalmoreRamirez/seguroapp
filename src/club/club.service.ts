@@ -61,6 +61,7 @@ export class ClubService {
       .innerJoin('user.seguroClubUsers', 'seguroClubUser')
       .innerJoin('seguroClubUser.club', 'club')
       .where('club.id = :clubId', { clubId: Number(clubId) })
+      .orderBy('user.edad', 'ASC')
       .getMany();
 
     return { club, users };

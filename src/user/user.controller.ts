@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -37,18 +38,31 @@ export class UserController {
     @UploadedFile() file,
     @Param('idClub') idClub: number,
   ): Promise<User[]> {
+    if (!file || !file.buffer) {
+      throw new BadRequestException(
+        'File not provided or file buffer is undefined',
+      );
+    }
+
     const workbook = XLSX.read(file.buffer, { type: 'buffer' });
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-    const users = jsonData.map((row) => {
-      return {
-        nombre: row[1],
-        apellido: row[2],
-        edad: row[3],
-        seguro: row[4],
-      };
-    });
+    const users = jsonData
+      .map((row) => {
+        const edad = parseInt(row[2]);
+        if (isNaN(edad)) {
+          return null;
+        }
+        return {
+          nombre: row[0],
+          apellido: row[1],
+          edad: edad,
+          seguro: row[3],
+        };
+      })
+      .filter((user) => user !== null);
+
     return await this.userService.createMany({ users, idClub });
   }
 
